@@ -1,36 +1,38 @@
- 
-pipeline{
+pipeline {
+  agent any
+  stages {
+    stage('build') {
+      steps {
+        sh 'npm install'
+      }
+    }
 
-    agent any
+    stage('test') {
+      steps {
+        sh 'npm test'
+      }
+    }
 
-// uncomment the following lines by removing /* and */ to enable
-    tools{
-       nodejs 'nodejs' 
+    stage('package') {
+      steps {
+        sh 'npm run package'
+      }
     }
-   
-    stages{
-        stage('build'){
-            steps{
-                sh 'npm install'
-            }
-        }
-        stage('test'){
-            steps{
-	        sh 'npm test'
-            }
-        }
-        stage('package'){
-            steps{
-                sh 'npm run package'
-            }
-        }
+
+    stage('Archive') {
+      steps {
+        archiveArtifacts '**/distribution/*.zip'
+      }
     }
-    
-    post{
-        always{
-            echo 'this pipeline is for shopping portal application'
-        }
-        
+
+  }
+  tools {
+    nodejs 'nodejs'
+  }
+  post {
+    always {
+      echo 'this pipeline is for shopping portal application'
     }
-    
+
+  }
 }
